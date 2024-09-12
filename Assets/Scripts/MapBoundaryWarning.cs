@@ -10,19 +10,19 @@ public class MapBoundaryWarning : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        Debug.Log("Trigger is happened");
+        //Debug.Log("Trigger is happened");
         if (other.CompareTag("Player"))
         {
-            Debug.Log("Trigger is with PLAYER");
+            //Debug.Log("Trigger is with PLAYER");
             if (gameObject.name == "RoadForwardWall")
             {
-                Debug.Log("FORWARD WALL");
+                //Debug.Log("FORWARD WALL");
                 itemPickedInformation.SetActive(true);
                 itemPickedInformationText.text = "I need some fuel for the car. I can't walk all the way";
             }
             else if (gameObject.name == "RoadBackwardWall")
             {
-                Debug.Log("BACK WALL");
+                //Debug.Log("BACK WALL");
                 itemPickedInformation.SetActive(true);
                 itemPickedInformationText.text = "There is nothing for me to go back to";
             }

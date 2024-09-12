@@ -81,12 +81,12 @@ public class PlayerController : MonoBehaviour
         UpdateHealthUI();
 
         inventoryManager = GameObject.Find("Inventory Management").GetComponent<InventoryManager>();
-        flaslightMeshRenderer= flashlight.GetComponent<MeshRenderer>();
+        flaslightMeshRenderer = flashlight.GetComponent<MeshRenderer>();
 
-        Transform flashlightShineTransform=flashlight.transform.GetChild(0);
-        if(flashlightShineTransform != null )
+        Transform flashlightShineTransform = flashlight.transform.GetChild(0);
+        if (flashlightShineTransform != null)
         {
-            flashlightShineMeshRenderer=flashlightShineTransform.GetComponent<MeshRenderer>();
+            flashlightShineMeshRenderer = flashlightShineTransform.GetComponent<MeshRenderer>();
         }
     }
 
@@ -116,12 +116,12 @@ public class PlayerController : MonoBehaviour
         //Collecting Items
         if (Input.GetKeyDown(KeyCode.E))
         {
-            PickUpItem();
+            Interaction();
         }
         //Opening cloasing hand
-        if(Input.GetKeyDown(KeyCode.F))
+        if (Input.GetKeyDown(KeyCode.F))
         {
-           playerRightHand.SetActive(!(playerRightHand.activeSelf));
+            playerRightHand.SetActive(!(playerRightHand.activeSelf));
         }
         //What are you looking at?
         LookingToWhat();
@@ -208,7 +208,7 @@ public class PlayerController : MonoBehaviour
         transform.rotation *= Quaternion.Euler(0f, lookX, 0f);
     }
 
-    void PickUpItem()
+    void Interaction()
     {
         //perform raycast to check if player is looking at object within pickuprange
         RaycastHit hit;
@@ -242,7 +242,7 @@ public class PlayerController : MonoBehaviour
                             flashlight.transform.localPosition = Vector3.zero; // El fenerini playerHand'in pozisyonuna sýfýrla
                             flashlight.transform.localRotation = Quaternion.identity; // El fenerini playerHand'in rotasyonuna sýfýrla
                             flaslightMeshRenderer.enabled = false;
-                            flashlightShineMeshRenderer.enabled=false;
+                            flashlightShineMeshRenderer.enabled = false;
                             break;
 
                         // Add more cases for additional item types
@@ -260,6 +260,32 @@ public class PlayerController : MonoBehaviour
                     // Add it to the inventory or perform other actions
                 }
             }
+            else if (hit.transform.gameObject.tag == "Note")
+            {
+                // Access the custom component to determine the type
+                NoteTypes notetypes = hit.transform.gameObject.GetComponent<NoteTypes>();
+                //Debug.Log("Hit on NOTE");
+                if (notetypes != null)
+                {
+                    // Now, you can use the item type to identify the type of object
+                    switch (notetypes.noteType)
+                    {
+                        case NoteTypes.NoteType.Grave:
+                            //Debug.Log("TOUCHED THE GRAVE");
+                            inventoryManager.itemPickedInformation.SetActive(true);
+                            inventoryManager.itemPickedInformationText.text = "An old grave, the writings on it is long gone.";
+                            StartCoroutine(CloseNoteTime());
+                            break;
+
+                        case NoteTypes.NoteType.BlueDragon:
+                            //Debug.Log("Touched THE DRAGON");
+                            inventoryManager.itemPickedInformation.SetActive(true);
+                            inventoryManager.itemPickedInformationText.text = "HORRRY SHIT IS THAT THE LEGENDARY BLUE DRAGONN!!?? RRRRAAAAAAAA";
+                            StartCoroutine(CloseNoteTime());
+                            break;
+                    }
+                }
+            }
         }
 
     }
@@ -272,6 +298,10 @@ public class PlayerController : MonoBehaviour
         if (Physics.Raycast(playerCamera.transform.position, playerCamera.transform.TransformDirection(Vector3.forward), out hit, pickUpRange))
         {
             if (hit.transform.gameObject.tag == "Pickable")
+            {
+                ShowHandImage();
+            }
+            else if (hit.transform.gameObject.tag == "Note")
             {
                 ShowHandImage();
             }
@@ -300,6 +330,12 @@ public class PlayerController : MonoBehaviour
     {
         yield return new WaitForSeconds(1.6f);
         isMedUsed = false;
+    }
+
+    IEnumerator CloseNoteTime()
+    {
+        yield return new WaitForSeconds(3f);
+        inventoryManager.itemPickedInformation.SetActive(false);
     }
 
     //Checking the colliding
