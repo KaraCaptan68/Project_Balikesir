@@ -6,7 +6,7 @@ public class ForestAmbianceTrigger : MonoBehaviour
 {
     public AudioSource ambianceAudioSource;
     public float fadeDuration = 1.0f; // Saniye cinsinden fade süresi
-
+    public float maxVolume = 0.6f; // Maksimum ses seviyesi
     private Coroutine fadeCoroutine; 
 
     private void OnTriggerEnter(Collider other)
@@ -42,12 +42,12 @@ public class ForestAmbianceTrigger : MonoBehaviour
         float elapsedTime = 0f;
         while (elapsedTime < duration)
         {
-            audioSource.volume = Mathf.Lerp(0f, 1f, elapsedTime / duration);
+            audioSource.volume = Mathf.Lerp(0f, maxVolume, elapsedTime / duration);
             elapsedTime += Time.deltaTime;
             yield return null;
         }
 
-        audioSource.volume = 1f;
+        audioSource.volume = maxVolume;
     }
 
     private IEnumerator FadeOut(AudioSource audioSource, float duration)
