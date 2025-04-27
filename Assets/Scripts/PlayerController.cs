@@ -12,29 +12,23 @@ public class PlayerController : MonoBehaviour
 
     //Movement & Camera
     private float rotationX = 0f;
-    public float mouseSensitivity = 100f;
+    public float mouseSensitivity = 200f;
     public float moveSpeed = 5f;
-    public float runSpeed = 10f;
+    public float runSpeed = 9f;
 
     //Stamina & Health
     public float maxStamina = 100f;
-    public float staminaRegenRate = 10f;
+    public float staminaRegenRate = 60f;
     public float staminaDepletionRate = 20f;
     private float currentStamina;
     private bool isExhausted = false;
 
-    public float maxHealth = 100f;
-    public float medkitHealRate = 40f;
-    public float currentHealth;
-
     //Stamina & Health HUD
     public Slider staminaSlider;
     public TextMeshProUGUI staminaText;
-    public Slider healthSlider;
-    public TextMeshProUGUI healthText;
 
     //Item Picking Up
-    private float pickUpRange = 2f;
+    [Tooltip("Item pick up range")] public float pickUpRange = 2f;
 
     //Item Picking Up HUD
     [SerializeField] RawImage dotImage;
@@ -43,19 +37,12 @@ public class PlayerController : MonoBehaviour
     //Inventory
     [SerializeField] GameObject inventoryHUD;
     private InventoryManager inventoryManager;
-    bool isMedUsed = false;
 
     public GameObject flashlight;
     private MeshRenderer flaslightMeshRenderer;
     private MeshRenderer flashlightShineMeshRenderer;
     public GameObject playerRightHand;
 
-    ////Pause Menu
-    //public GameObject pauseMenu;            //PauseMenu script do this job
-
-    //Damage Control
-    //private float damageCooldown = 1.0f; // Set your desired cooldown time in seconds
-    //private float lastDamageTime;         //NO ENEMY AT THE MOMENT
 
     /*CONTROLS:
      * W,A,S,D for movemnt
@@ -77,9 +64,6 @@ public class PlayerController : MonoBehaviour
         currentStamina = maxStamina;
         UpdateStaminaUI();
 
-        currentHealth = maxHealth;
-        UpdateHealthUI();
-
         inventoryManager = GameObject.Find("Inventory Management").GetComponent<InventoryManager>();
         flaslightMeshRenderer = flashlight.GetComponent<MeshRenderer>();
 
@@ -99,20 +83,7 @@ public class PlayerController : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Tab))
         {
             inventoryHUD.SetActive(!(inventoryHUD.activeSelf));
-        }
-        ////To Open Pause Screen                   //PauseMenu script do this job
-        //if(Input.GetKeyDown(KeyCode.Escape))
-        //{
-        //     pauseMenu.SetActive(!(pauseMenu.activeSelf));          
-        //}
-
-        //To use a MEDKÝT
-        if (Input.GetKeyDown(KeyCode.T) && !(isMedUsed))
-        {
-            isMedUsed = true;
-            inventoryManager.MedkitUsed();
-            StartCoroutine(MedUseCooldown());
-        }
+        }      
         //Collecting Items
         if (Input.GetKeyDown(KeyCode.E))
         {
@@ -188,12 +159,6 @@ public class PlayerController : MonoBehaviour
         isExhausted = false;
     }
 
-    public void UpdateHealthUI()
-    {
-
-        healthSlider.value = currentHealth;
-        healthText.text = "Health: " + Mathf.Round(currentHealth).ToString();
-    }
 
     void CameraControls()
     {
@@ -224,18 +189,6 @@ public class PlayerController : MonoBehaviour
                     // Now, you can use the item type to identify the type of object
                     switch (pickableObject.itemType)
                     {
-                        case PickableItem.ItemType.Medkit:
-                            Debug.Log("Destroyed Medkit");
-                            // Perform Medkit-specific actions
-                            inventoryManager.MedkitCollected();
-                            break;
-
-                        case PickableItem.ItemType.Bullet:
-                            Debug.Log("Destroyed Bullet");
-                            // Perform Bullet-specific actions
-                            inventoryManager.BulletCollected();
-                            break;
-
                         case PickableItem.ItemType.Flashlight:
                             Debug.Log("Got The FLASLIGHT");
                             flashlight.transform.SetParent(playerRightHand.transform);
@@ -326,44 +279,9 @@ public class PlayerController : MonoBehaviour
         handImage.enabled = true;
     }
 
-    IEnumerator MedUseCooldown()
-    {
-        yield return new WaitForSeconds(1.6f);
-        isMedUsed = false;
-    }
-
     IEnumerator CloseNoteTime()
     {
         yield return new WaitForSeconds(3f);
         inventoryManager.itemPickedInformation.SetActive(false);
     }
-
-    //Checking the colliding
-    //private void OnControllerColliderHit(ControllerColliderHit hit)
-    //{
-    //    // Check if the collision involves an object with the "Enemy" tag.
-    //    if (hit.gameObject.CompareTag("Enemy"))
-    //    {
-    //        if (Time.time - lastDamageTime > damageCooldown)
-    //        {
-    //            Debug.Log("Contact happened with ENEMY");
-
-    //            if (currentHealth > 0)
-    //            {
-    //                Debug.Log("HEALTH DROPPED");
-    //                currentHealth -= 20;
-    //                UpdateHealthUI();
-
-    //                if (currentHealth == 0)
-    //                {
-    //                    Debug.Log("YOU DEAD");
-    //                }
-
-    //                lastDamageTime = Time.time; // Update the last damage time
-    //            }
-    //        }
-    //    }
-
-
-    //}
 }

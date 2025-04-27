@@ -46,11 +46,6 @@ public class PauseMenu : MonoBehaviour
         Cursor.lockState = CursorLockMode.None; // Oyun durduðunda fareyi serbest býrakýn
         Cursor.visible = true; // Fareyi görünür yapýn
     }
-    public void Load()
-    {
-        //Time.timeScale = 1;
-        Debug.Log("LOAD SAVE");
-    }
     public void MainMenu()
     {
         Time.timeScale = 1;
